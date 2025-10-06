@@ -76,11 +76,18 @@
         .controls {
             position: absolute;
             bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 40px;
-            background: linear-gradient(0deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0) 100%);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0;
+            background: transparent;
             pointer-events: auto;
+            transition: bottom 0.4s ease;
+            max-width: 900px;
+            width: calc(100% - 40px);
+        }
+
+        .controls.collapsed {
+            bottom: -480px;
         }
 
         .player {
@@ -217,8 +224,8 @@
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.1);
             outline: none;
-            -webkit-appearance: none;
             appearance: none;
+            -webkit-appearance: none;
             cursor: pointer;
         }
 
@@ -310,10 +317,50 @@
                 padding: 20px;
             }
         }
+
+        .toggle-ui-btn {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 3;
+            pointer-events: auto;
+        }
+
+        .toggle-ui-btn:hover {
+            background: rgba(30, 30, 30, 0.9);
+            border-color: rgba(0, 212, 255, 0.5);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .toggle-ui-btn svg {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-ui-btn.ui-hidden svg {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
+
+    <button class="toggle-ui-btn" id="toggleUI" style="display: none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
 
     <div class="overlay">
         <div class="header">
@@ -515,6 +562,7 @@
             document.getElementById('playBtn').disabled = false;
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('controlsPanel').style.display = 'block';
+            document.getElementById('toggleUI').style.display = 'flex';
 
             audio.addEventListener('loadedmetadata', () => {
                 document.getElementById('duration').textContent = formatTime(audio.duration);
@@ -640,6 +688,16 @@
             const volume = parseInt(e.target.value);
             document.getElementById('audio').volume = volume / 100;
             document.getElementById('volumeVal').textContent = volume;
+        });
+
+        document.getElementById('toggleUI').addEventListener('click', () => {
+            const header = document.querySelector('.header');
+            const controls = document.querySelector('.controls');
+            const toggleBtn = document.getElementById('toggleUI');
+            
+            header.classList.toggle('hidden');
+            controls.classList.toggle('hidden');
+            toggleBtn.classList.toggle('ui-hidden');
         });
 
         init();

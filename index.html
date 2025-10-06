@@ -48,12 +48,12 @@
             padding: 30px 40px;
             background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0) 100%);
             pointer-events: auto;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            transition: opacity 0.3s ease;
         }
 
-        .header.hidden {
-            transform: translateY(-100%);
+        .controls.collapsed ~ .overlay .header {
             opacity: 0;
+            pointer-events: none;
         }
 
         h1 {
@@ -74,30 +74,65 @@
         }
 
         .controls {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             padding: 0;
             background: transparent;
             pointer-events: auto;
-            transition: bottom 0.4s ease;
+            transition: transform 0.4s ease;
             max-width: 900px;
             width: calc(100% - 40px);
+            z-index: 10;
         }
 
         .controls.collapsed {
-            bottom: -480px;
+            transform: translateX(-50%) translateY(calc(100% - 40px));
         }
 
         .player {
             max-width: 800px;
-            margin: 0 auto;
-            background: rgba(20, 20, 20, 0.8);
+            margin: 0 auto 20px;
+            background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .toggle-controls-btn {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 40px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-controls-btn:hover {
+            background: rgba(30, 30, 30, 0.95);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .toggle-controls-btn svg {
+            transition: transform 0.3s ease;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .controls.collapsed .toggle-controls-btn svg {
+            transform: rotate(180deg);
         }
 
         .upload-section {
@@ -224,8 +259,8 @@
             border-radius: 2px;
             background: rgba(255, 255, 255, 0.1);
             outline: none;
-            appearance: none;
             -webkit-appearance: none;
+            appearance: none;
             cursor: pointer;
         }
 
@@ -316,51 +351,19 @@
             .header, .controls {
                 padding: 20px;
             }
-        }
 
-        .toggle-ui-btn {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            z-index: 3;
-            pointer-events: auto;
-        }
+            .controls {
+                width: calc(100% - 20px);
+            }
 
-        .toggle-ui-btn:hover {
-            background: rgba(30, 30, 30, 0.9);
-            border-color: rgba(0, 212, 255, 0.5);
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .toggle-ui-btn svg {
-            transition: transform 0.3s ease;
-        }
-
-        .toggle-ui-btn.ui-hidden svg {
-            transform: rotate(180deg);
+            .controls.collapsed {
+                bottom: -500px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
-
-    <button class="toggle-ui-btn" id="toggleUI" style="display: none;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-    </button>
 
     <div class="overlay">
         <div class="header">
@@ -377,6 +380,11 @@
         </div>
 
         <div class="controls" style="display: none;" id="controlsPanel">
+            <button class="toggle-controls-btn" id="toggleControls">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+            </button>
             <div class="player">
                 <div class="upload-section">
                     <button class="upload-btn" onclick="document.getElementById('audioFile').click()">
@@ -562,7 +570,6 @@
             document.getElementById('playBtn').disabled = false;
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('controlsPanel').style.display = 'block';
-            document.getElementById('toggleUI').style.display = 'flex';
 
             audio.addEventListener('loadedmetadata', () => {
                 document.getElementById('duration').textContent = formatTime(audio.duration);
@@ -690,14 +697,9 @@
             document.getElementById('volumeVal').textContent = volume;
         });
 
-        document.getElementById('toggleUI').addEventListener('click', () => {
-            const header = document.querySelector('.header');
-            const controls = document.querySelector('.controls');
-            const toggleBtn = document.getElementById('toggleUI');
-            
-            header.classList.toggle('hidden');
-            controls.classList.toggle('hidden');
-            toggleBtn.classList.toggle('ui-hidden');
+        document.getElementById('toggleControls').addEventListener('click', () => {
+            const controls = document.getElementById('controlsPanel');
+            controls.classList.toggle('collapsed');
         });
 
         init();

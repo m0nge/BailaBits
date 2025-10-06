@@ -48,6 +48,12 @@
             padding: 30px 40px;
             background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0) 100%);
             pointer-events: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .header.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
         }
 
         h1 {
@@ -280,11 +286,7 @@
             transform: translate(-50%, -50%);
             text-align: center;
             pointer-events: auto;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            z-index: 3;
         }
 
         .welcome-icon {
@@ -315,8 +317,8 @@
 
     <div class="overlay">
         <div class="header">
-            <h1>BailaBits</h1>
-            <p class="subtitle">Visualización musical en tiempo real con WebGL</p>
+            <h1>Audio Visualizer 3D</h1>
+            <p class="subtitle">Real-time music visualization with WebGL</p>
         </div>
 
         <div class="welcome-screen" id="welcomeScreen">
@@ -587,8 +589,6 @@
         document.getElementById('audioFile').addEventListener('change', (e) => {
             if (e.target.files[0]) {
                 setupAudio(e.target.files[0]);
-                document.getElementById('welcomeScreen').style.display = 'none';
-                document.getElementById('controlsPanel').style.display = 'block';
             }
         });
 

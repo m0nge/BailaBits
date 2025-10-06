@@ -254,6 +254,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('volumeVal').textContent = volume;
     });
 
+document.getElementById('toggleControls').addEventListener('click', () => {
+        const controls = document.getElementById('controlsPanel');
+        controls.classList.toggle('collapsed');
+    });
+
     // Initialize
     init();
 });

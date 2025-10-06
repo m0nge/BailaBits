@@ -280,7 +280,11 @@
             transform: translate(-50%, -50%);
             text-align: center;
             pointer-events: auto;
-            z-index: 3;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .welcome-icon {
@@ -583,6 +587,8 @@
         document.getElementById('audioFile').addEventListener('change', (e) => {
             if (e.target.files[0]) {
                 setupAudio(e.target.files[0]);
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('controlsPanel').style.display = 'block';
             }
         });
 
